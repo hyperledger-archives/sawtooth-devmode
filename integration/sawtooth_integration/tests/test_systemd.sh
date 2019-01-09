@@ -18,13 +18,6 @@
 # without immediately crashing given the default arguments
 
 services="
-validator
-rest-api
-intkey-tp-python
-xo-tp-python
-settings-tp
-block-info-tp
-identity-tp
 devmode-engine-rust
 "
 
@@ -42,12 +35,6 @@ do
     echo "Starting container '$container' from '$image'..."
     docker run -d --name $container --privileged --rm $image systemd
     sleep 1 # Give systemd a chance to start
-
-    if [ $serv = "validator" ]
-    then
-        echo "Running keygen in $container..."
-        docker exec $container sawadm keygen
-    fi
 
     # 2. Start the systemd service in the container
     echo "Starting $service in $container..."
