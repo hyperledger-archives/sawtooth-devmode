@@ -19,40 +19,35 @@ services:
 
   test-devmode-engine-liveness:
     build:
-      context: ../../..
-      dockerfile: integration/sawtooth_integration/docker/integration-tests.dockerfile
+      context: ../
+      dockerfile: tests/integration-tests.dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: integration-tests:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
     command: nose2-3
-        -c /project/sawtooth-core/integration/sawtooth_integration/nose2.cfg
+        -c /project/sawtooth-devmode/tests/nose2.cfg
         -vvvv
-        -s /project/sawtooth-core/integration/sawtooth_integration/tests
+        -s /project/sawtooth-devmode/tests
         test_devmode_engine_liveness
     expose:
       - 8008
     stop_signal: SIGKILL
-    environment:
-      PYTHONPATH: "/project/sawtooth-core/sdk/python:\
-        /project/sawtooth-core/integration:\
-        /project/sawtooth-core/signing:\
-        /project/sawtooth-core/cli"
 
   intkey-workload:
     build:
-      context: ../../..
-      dockerfile: integration/sawtooth_integration/docker/integration-tests.dockerfile
+      context: ../
+      dockerfile: tests/integration-tests.dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: integration-tests:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
     expose:
       - 8008
     command: "bash -c \"\
@@ -60,95 +55,80 @@ services:
       intkey workload --rate 1 --display-frequency 15 --urls http://rest-api-0:8008,http://rest-api-1:8008,http://rest-api-2:8008,http://rest-api-3:8008,http://rest-api-4:8008 \
       \""
     stop_signal: SIGKILL
-    environment:
-      PYTHONPATH: "/project/sawtooth-core/sdk/python:\
-        /project/sawtooth-core/sdk/examples/intkey_python:\
-        /project/sawtooth-core/integration:\
-        /project/sawtooth-core/signing:\
-        /project/sawtooth-core/cli"
 
   devmode-engine-0:
     build:
-      context: ../../..
-      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
+      context: ../
+      dockerfile: ./Dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: sawtooth-devmode$INSTALL_TYPE:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
     command: devmode-engine-rust --connect tcp://validator-0:5005 -vv
     stop_signal: SIGKILL
 
   devmode-engine-1:
     build:
-      context: ../../..
-      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
+      context: ../
+      dockerfile: ./Dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: sawtooth-devmode$INSTALL_TYPE:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
     command: devmode-engine-rust --connect tcp://validator-1:5005 -vv
     stop_signal: SIGKILL
 
   devmode-engine-2:
     build:
-      context: ../../..
-      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
+      context: ../
+      dockerfile: ./Dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: sawtooth-devmode$INSTALL_TYPE:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
     command: devmode-engine-rust --connect tcp://validator-2:5005 -vv
     stop_signal: SIGKILL
 
   devmode-engine-3:
     build:
-      context: ../../..
-      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
+      context: ../
+      dockerfile: ./Dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: sawtooth-devmode$INSTALL_TYPE:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
     command: devmode-engine-rust --connect tcp://validator-3:5005 -vv
     stop_signal: SIGKILL
 
   devmode-engine-4:
     build:
-      context: ../../..
-      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
+      context: ../
+      dockerfile: ./Dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: sawtooth-devmode$INSTALL_TYPE:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
     command: |
       bash -c "sleep 15 && devmode-engine-rust --connect tcp://validator-4:5005 -v"
     stop_signal: SIGKILL
 
   validator-0:
-    build:
-      context: ../../..
-      dockerfile: ./validator/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-validator$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-validator:nightly
     expose:
       - 4004
       - 8800
@@ -182,16 +162,7 @@ services:
     stop_signal: SIGKILL
 
   validator-1:
-    build:
-      context: ../../..
-      dockerfile: ./validator/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-validator$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-validator:nightly
     expose:
       - 4004
       - 8800
@@ -213,16 +184,7 @@ services:
     stop_signal: SIGKILL
 
   validator-2:
-    build:
-      context: ../../..
-      dockerfile: ./validator/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-validator$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-validator:nightly
     expose:
       - 4004
       - 8800
@@ -244,16 +206,7 @@ services:
     stop_signal: SIGKILL
 
   validator-3:
-    build:
-      context: ../../..
-      dockerfile: ./validator/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-validator$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-validator:nightly
     expose:
       - 4004
       - 8800
@@ -275,16 +228,7 @@ services:
     stop_signal: SIGKILL
 
   validator-4:
-    build:
-      context: ../../..
-      dockerfile: ./validator/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-validator$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-validator:nightly
     expose:
       - 4004
       - 8800
@@ -306,16 +250,7 @@ services:
     stop_signal: SIGKILL
 
   rest-api-0:
-    build:
-      context: ../../..
-      dockerfile: ./rest_api/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-rest-api$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-rest-api:nightly
     expose:
       - 4004
       - 8008
@@ -323,16 +258,7 @@ services:
     stop_signal: SIGKILL
 
   rest-api-1:
-    build:
-      context: ../../..
-      dockerfile: ./rest_api/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-rest-api$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-rest-api:nightly
     expose:
       - 4004
       - 8008
@@ -340,16 +266,7 @@ services:
     stop_signal: SIGKILL
 
   rest-api-2:
-    build:
-      context: ../../..
-      dockerfile: ./rest_api/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-rest-api$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-rest-api:nightly
     expose:
       - 4004
       - 8008
@@ -357,16 +274,7 @@ services:
     stop_signal: SIGKILL
 
   rest-api-3:
-    build:
-      context: ../../..
-      dockerfile: ./rest_api/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-rest-api$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-rest-api:nightly
     expose:
       - 4004
       - 8008
@@ -374,16 +282,7 @@ services:
     stop_signal: SIGKILL
 
   rest-api-4:
-    build:
-      context: ../../..
-      dockerfile: ./rest_api/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-rest-api$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-rest-api:nightly
     expose:
       - 4004
       - 8008
@@ -391,160 +290,70 @@ services:
     stop_signal: SIGKILL
 
   intkey-tp-0:
-    build:
-      context: ../../..
-      dockerfile: ./sdk/examples/intkey_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-intkey-tp-rust$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-intkey-tp-python:nightly
     expose:
       - 4004
-    command: intkey-tp-rust -C tcp://validator-0:4004
+    command: intkey-tp-python -C tcp://validator-0:4004
     stop_signal: SIGKILL
 
   intkey-tp-1:
-    build:
-      context: ../../..
-      dockerfile: ./sdk/examples/intkey_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-intkey-tp-rust$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-intkey-tp-python:nightly
     expose:
       - 4004
-    command: intkey-tp-rust -C tcp://validator-1:4004
+    command: intkey-tp-python -C tcp://validator-1:4004
     stop_signal: SIGKILL
 
   intkey-tp-2:
-    build:
-      context: ../../..
-      dockerfile: ./sdk/examples/intkey_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-intkey-tp-rust$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-intkey-tp-python:nightly
     expose:
       - 4004
-    command: intkey-tp-rust -C tcp://validator-2:4004
+    command: intkey-tp-python -C tcp://validator-2:4004
     stop_signal: SIGKILL
 
   intkey-tp-3:
-    build:
-      context: ../../..
-      dockerfile: ./sdk/examples/intkey_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-intkey-tp-rust$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-intkey-tp-python:nightly
     expose:
       - 4004
-    command: intkey-tp-rust -C tcp://validator-3:4004
+    command: intkey-tp-python -C tcp://validator-3:4004
     stop_signal: SIGKILL
 
   intkey-tp-4:
-    build:
-      context: ../../..
-      dockerfile: ./sdk/examples/intkey_rust/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-intkey-tp-rust$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-intkey-tp-python:nightly
     expose:
       - 4004
-    command: intkey-tp-rust -C tcp://validator-4:4004
+    command: intkey-tp-python -C tcp://validator-4:4004
     stop_signal: SIGKILL
 
   settings-tp-0:
-    build:
-      context: ../../..
-      dockerfile: ./families/settings/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-settings-tp$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-settings-tp:nightly
     expose:
       - 4004
     command: settings-tp -C tcp://validator-0:4004
     stop_signal: SIGKILL
 
   settings-tp-1:
-    build:
-      context: ../../..
-      dockerfile: ./families/settings/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-settings-tp$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-settings-tp:nightly
     expose:
       - 4004
     command: settings-tp -C tcp://validator-1:4004
     stop_signal: SIGKILL
 
   settings-tp-2:
-    build:
-      context: ../../..
-      dockerfile: ./families/settings/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-settings-tp$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-settings-tp:nightly
     expose:
       - 4004
     command: settings-tp -C tcp://validator-2:4004
     stop_signal: SIGKILL
 
   settings-tp-3:
-    build:
-      context: ../../..
-      dockerfile: ./families/settings/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-settings-tp$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-settings-tp:nightly
     expose:
       - 4004
     command: settings-tp -C tcp://validator-3:4004
     stop_signal: SIGKILL
 
   settings-tp-4:
-    build:
-      context: ../../..
-      dockerfile: ./families/settings/Dockerfile
-      args:
-        - http_proxy
-        - https_proxy
-        - no_proxy
-    image: sawtooth-settings-tp$INSTALL_TYPE:$ISOLATION_ID
-    volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+    image: hyperledger/sawtooth-settings-tp:nightly
     expose:
       - 4004
     command: settings-tp -C tcp://validator-4:4004

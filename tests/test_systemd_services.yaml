@@ -18,16 +18,16 @@ version: "2.1"
 services:
   test-systemd-services:
     build:
-      context: ../../..
-      dockerfile: ./integration/sawtooth_integration/docker/integration-tests.dockerfile
+      context: ../
+      dockerfile: ./tests/integration-tests.dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: integration-tests:$ISOLATION_ID
     volumes:
-      - $SAWTOOTH_CORE:/project/sawtooth-core
+      - $SAWTOOTH_DEVMODE:/project/sawtooth-devmode
       - /var/run/docker.sock:/var/run/docker.sock
-    command: /project/sawtooth-core/integration/sawtooth_integration/tests/test_systemd.sh
+    command: /project/sawtooth-devmode/tests/test_systemd.sh
     environment:
       ISOLATION_ID: ${ISOLATION_ID}
