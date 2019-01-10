@@ -175,7 +175,8 @@ impl DevmodeService {
             let ints: Vec<u64> = vec![
                 &settings["sawtooth.consensus.min_wait_time"],
                 &settings["sawtooth.consensus.max_wait_time"],
-            ].iter()
+            ]
+            .iter()
             .map(|string| string.parse::<u64>())
             .map(|result| result.unwrap_or(0))
             .collect();
@@ -309,7 +310,9 @@ impl Engine for DevmodeEngine {
                         }
 
                         Update::PeerMessage(message, sender_id) => {
-                            match DevmodeMessage::from_str(message.header.message_type.as_ref()).unwrap() {
+                            match DevmodeMessage::from_str(message.header.message_type.as_ref())
+                                .unwrap()
+                            {
                                 DevmodeMessage::Published => {
                                     let block_id = BlockId::from(message.content);
                                     info!(
