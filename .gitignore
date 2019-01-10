@@ -18,6 +18,7 @@
 *.sublime*
 
 # Everything else
-/sdk/examples/devmode_rust/target/
-/sdk/examples/devmode_rust/Cargo.lock
-/sdk/examples/devmode_rust/bin/
+build/
+Cargo.lock
+target/
+tests/__pycache__/
