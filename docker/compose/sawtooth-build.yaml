@@ -19,11 +19,11 @@ services:
   devmode-rust:
     build:
       context: ../../
-      dockerfile: ./sdk/examples/devmode_rust/Dockerfile
+      dockerfile: ./Dockerfile
       args:
         - http_proxy
         - https_proxy
         - no_proxy
     image: sawtooth-devmode-engine-rust-local:${ISOLATION_ID}
     volumes:
-      - ../../:/project/sawtooth-core
+      - ../../:/project/sawtooth-devmode

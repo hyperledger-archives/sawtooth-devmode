@@ -42,15 +42,15 @@ RUN /root/.cargo/bin/cargo install cargo-deb
 
 COPY . /project
 
-WORKDIR /project/sdk/examples/devmode_rust
+WORKDIR /project
 
-RUN sed -i -e s/version.*$/version\ =\ \"$(../../../bin/get_version)\"/ Cargo.toml
+RUN sed -i -e s/version.*$/version\ =\ \"$(./bin/get_version)\"/ Cargo.toml
 RUN /root/.cargo/bin/cargo deb
 
 # -------------=== devmode rust docker build ===-------------
 FROM ubuntu:xenial
 
-COPY --from=devmode-rust-builder /project/sdk/examples/devmode_rust/target/debian/sawtooth-devmode-engine-rust_*.deb /tmp
+COPY --from=devmode-rust-builder /project/target/debian/sawtooth-devmode-engine-rust_*.deb /tmp
 
 RUN apt-get update \
  && dpkg -i /tmp/sawtooth-devmode-engine-rust_*.deb || true \

@@ -19,7 +19,7 @@ services:
   devmode-rust:
     build:
       context: .
-      dockerfile: sdk/examples/devmode_rust/Dockerfile-installed-${DISTRO}
+      dockerfile: Dockerfile-installed-${DISTRO}
       args:
         - http_proxy
         - https_proxy

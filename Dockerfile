@@ -13,22 +13,15 @@
 # limitations under the License.
 # ------------------------------------------------------------------------------
 
-# docker build -f sdk/examples/devmode_rust/Dockerfile-installed-bionic -t sawtooth-devmode-rust .
-
-# -------------=== sawtooth devmode rust build ===-------------
-FROM ubuntu:bionic as devmode-rust-builder
-
-ENV VERSION=AUTO_STRICT
+FROM ubuntu:bionic
 
 RUN apt-get update \
  && apt-get install -y \
  curl \
  gcc \
- git \
  libssl-dev \
  libzmq3-dev \
  pkg-config \
- python3 \
  unzip
 
 # For Building Protobufs
@@ -37,22 +30,11 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y \
  && unzip protoc-3.5.1-linux-x86_64.zip -d protoc3 \
  && rm protoc-3.5.1-linux-x86_64.zip
 
-ENV PATH=$PATH:/protoc3/bin
-RUN /root/.cargo/bin/cargo install cargo-deb
+ENV PATH=$PATH:/project/sawtooth-devmode/bin:/protoc3/bin:/root/.cargo/bin \
+    CARGO_INCREMENTAL=0
 
-COPY . /project
+WORKDIR /project/sawtooth-devmode/
 
-WORKDIR /project/sdk/examples/devmode_rust
-
-RUN sed -i -e s/version.*$/version\ =\ \"$(../../../bin/get_version)\"/ Cargo.toml
-RUN /root/.cargo/bin/cargo deb
-
-# -------------=== devmode rust docker build ===-------------
-FROM ubuntu:bionic
-
-COPY --from=devmode-rust-builder /project/sdk/examples/devmode_rust/target/debian/sawtooth-devmode-engine-rust_*.deb /tmp
-
-RUN apt-get update \
- && apt-get install systemd -y \
- && dpkg -i /tmp/sawtooth-devmode-engine-rust_*.deb || true \
- && apt-get -f -y install
+CMD echo "\033[0;32m--- Building sawtooth-devmode-rust ---\n\033[0m" \
+ && rm -rf ./target/release/ \
+ && cargo build --release
