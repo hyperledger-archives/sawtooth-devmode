@@ -18,7 +18,7 @@
 #   the Sawtooth Package Repository.
 #
 # Build:
-#   $ cd sawtooth-core/ci
+#   $ cd sawtooth-devmode/ci
 #   $ docker build . -f sawtooth-devmode-engine-rust -t sawtooth-devmode-engine-rust
 #
 # Run:

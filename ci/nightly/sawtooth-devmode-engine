@@ -18,7 +18,7 @@
 #   the nightly Sawtooth Package Repository.
 #
 # Build:
-#   $ cd sawtooth-core/ci/nightly
+#   $ cd sawtooth-devmode/ci/nightly
 #   $ docker build . -f sawtooth-devmode-engine -t sawtooth-devmode-engine
 #
 # Run:
