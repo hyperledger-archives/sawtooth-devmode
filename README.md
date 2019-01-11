@@ -1,23 +1,28 @@
-![Hyperledger Sawtooth](images/sawtooth_logo_light_blue-small.png)
+![Hyperledger Sawtooth](https://raw.githubusercontent.com/hyperledger/sawtooth-core/master/images/sawtooth_logo_light_blue-small.png)
 
-Hyperledger Sawtooth
+Sawtooth Devmode
 -------------
 
-Hyperledger Sawtooth is an enterprise solution for building, deploying, and
-running distributed ledgers (also called blockchains). It provides an extremely
-modular and flexible platform for implementing transaction-based updates to
-shared state between untrusted parties coordinated by consensus algorithms.
+Sawtooth dev mode is a consensus engine for Hyperledger Sawtooth that offers a
+simplified random-leader algorithm. This method is intended for testing
+applications built on top of the Hyperledger Sawtooth platform. It is useful
+when developing transaction processors, smart contracts, or other components
+because of its high commit rate. Dev mode commits batches as fast as possible,
+in order to provide quick feedback to the developer.
+
+Dev mode also demonstrates how to use the Sawtooth consensus engine API for a
+lottery-style consensus implementation. Developers interested in implementing
+a consensus engine can use the dev mode source code as an example.
+
+Although the dev mode consensus engine can be used in a Sawtooth network, it
+has a very inefficient fork-resolution algorithm and makes no guarantees about
+crash fault tolerance. It should not be used in a production environment.
 
 Documentation
 -------------
 
 Documentation for how to run and extend Sawtooth is available here:
 https://sawtooth.hyperledger.org/docs/
-
-Hyperledger Sawtooth Core Developers Setup Guide can be found here: [BUILD.md](BUILD.md)
-
-Running examples of Sawtooth blockchains can be found here:
-https://sawtooth.hyperledger.org/examples/
 
 
 Project Status
@@ -32,9 +37,3 @@ License
 -------
 
 Hyperledger Sawtooth software is licensed under the [Apache License Version 2.0](LICENSE) software license.
-
-Hyperledger Sawtooth documentation in the [docs](docs) subdirectory is licensed under
-a Creative Commons Attribution 4.0 International License.  You may obtain a copy of the
-license at: http://creativecommons.org/licenses/by/4.0/.
-
-![Open Source Award Badge](images/rookies16-small.png)
