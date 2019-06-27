@@ -1,6 +1,6 @@
 [package]
 name = "sawtooth-devmode-engine-rust"
-version = "0.1.0"
+version = "1.2.3"
 authors = ["Intel Corporation"]
 description = "Hyperledger Sawtooth DevMode Rust consensus engine"
 
