@@ -236,7 +236,7 @@ impl Engine for DevmodeEngine {
 
             match incoming_message {
                 Ok(update) => {
-                    debug!("Received message: {:?}", update);
+                    debug!("Received message: {}", message_type(&update));
 
                     match update {
                         Update::Shutdown => {
@@ -404,6 +404,19 @@ fn to_hex(bytes: &[u8]) -> String {
     }
 
     buf
+}
+
+fn message_type(update: &Update) -> &str {
+    match *update {
+        Update::PeerConnected(_) => "PeerConnected",
+        Update::PeerDisconnected(_) => "PeerDisconnected",
+        Update::PeerMessage(..) => "PeerMessage",
+        Update::BlockNew(_) => "BlockNew",
+        Update::BlockValid(_) => "BlockValid",
+        Update::BlockInvalid(_) => "BlockInvalid",
+        Update::BlockCommit(_) => "BlockCommit",
+        Update::Shutdown => "Shutdown",
+    }
 }
 
 fn check_consensus(block: &Block) -> bool {
