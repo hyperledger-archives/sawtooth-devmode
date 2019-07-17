@@ -26,6 +26,7 @@ use rand::Rng;
 use sawtooth_sdk::consensus::{engine::*, service::Service};
 
 const DEFAULT_WAIT_TIME: u64 = 0;
+const NULL_BLOCK_IDENTIFIER: [u8; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
 
 #[derive(Default)]
 struct LogGuard {
@@ -242,6 +243,11 @@ impl Engine for DevmodeEngine {
                         }
                         Update::BlockNew(block) => {
                             info!("Checking consensus data: {:?}", block);
+
+                            if &block.previous_id == &NULL_BLOCK_IDENTIFIER {
+                                warn!("Received genesis block; ignoring");
+                                continue;
+                            }
 
                             if check_consensus(&block) {
                                 info!("Passed consensus check: {:?}", block);
