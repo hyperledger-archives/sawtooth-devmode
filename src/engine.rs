@@ -77,7 +77,7 @@ impl DevmodeService {
         while let Err(Error::BlockNotReady) = summary {
             if !self.log_guard.not_ready_to_summarize {
                 self.log_guard.not_ready_to_summarize = true;
-                warn!("Block not ready to summarize");
+                debug!("Block not ready to summarize");
             }
             sleep(time::Duration::from_secs(1));
             summary = self.service.summarize_block();
@@ -89,7 +89,7 @@ impl DevmodeService {
         while let Err(Error::BlockNotReady) = block_id {
             if !self.log_guard.not_ready_to_finalize {
                 self.log_guard.not_ready_to_finalize = true;
-                warn!("Block not ready to finalize");
+                debug!("Block not ready to finalize");
             }
             sleep(time::Duration::from_secs(1));
             block_id = self.service.finalize_block(consensus.clone());
