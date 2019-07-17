@@ -56,7 +56,7 @@ impl DevmodeService {
     }
 
     fn get_block(&mut self, block_id: &BlockId) -> Block {
-        debug!("Getting block {:?}", &block_id);
+        debug!("Getting block {}", to_hex(&block_id));
         self.service
             .get_blocks(vec![block_id.clone()])
             .expect("Failed to get block")
@@ -100,28 +100,28 @@ impl DevmodeService {
     }
 
     fn check_block(&mut self, block_id: BlockId) {
-        debug!("Checking block {:?}", block_id);
+        debug!("Checking block {}", to_hex(&block_id));
         self.service
             .check_blocks(vec![block_id])
             .expect("Failed to check block");
     }
 
     fn fail_block(&mut self, block_id: BlockId) {
-        debug!("Failing block {:?}", block_id);
+        debug!("Failing block {}", to_hex(&block_id));
         self.service
             .fail_block(block_id)
             .expect("Failed to fail block");
     }
 
     fn ignore_block(&mut self, block_id: BlockId) {
-        debug!("Ignoring block {:?}", block_id);
+        debug!("Ignoring block {}", to_hex(&block_id));
         self.service
             .ignore_block(block_id)
             .expect("Failed to ignore block")
     }
 
     fn commit_block(&mut self, block_id: BlockId) {
-        debug!("Committing block {:?}", block_id);
+        debug!("Committing block {}", to_hex(&block_id));
         self.service
             .commit_block(block_id)
             .expect("Failed to commit block");
@@ -139,7 +139,7 @@ impl DevmodeService {
     }
 
     fn broadcast_published_block(&mut self, block_id: BlockId) {
-        debug!("Broadcasting published block: {:?}", block_id);
+        debug!("Broadcasting published block: {}", to_hex(&block_id));
         self.service
             .broadcast("published", Vec::from(block_id))
             .expect("Failed to broadcast published block");
@@ -304,8 +304,8 @@ impl Engine for DevmodeEngine {
                         // block in progress and start a new one.
                         Update::BlockCommit(new_chain_head) => {
                             info!(
-                                "Chain head updated to {:?}, abandoning block in progress",
-                                new_chain_head
+                                "Chain head updated to {}, abandoning block in progress",
+                                to_hex(&new_chain_head)
                             );
 
                             service.cancel_block();
@@ -324,16 +324,18 @@ impl Engine for DevmodeEngine {
                                 DevmodeMessage::Published => {
                                     let block_id = BlockId::from(message.content);
                                     info!(
-                                        "Received block published message from {:?}: {:?}",
-                                        &sender_id, block_id
+                                        "Received block published message from {}: {}",
+                                        to_hex(&sender_id),
+                                        to_hex(&block_id)
                                     );
                                 }
 
                                 DevmodeMessage::Received => {
                                     let block_id = BlockId::from(message.content);
                                     info!(
-                                        "Received block received message from {:?}: {:?}",
-                                        &sender_id, block_id
+                                        "Received block received message from {}: {}",
+                                        to_hex(&sender_id),
+                                        to_hex(&block_id)
                                     );
                                     service.send_block_ack(&sender_id, block_id);
                                 }
@@ -341,8 +343,9 @@ impl Engine for DevmodeEngine {
                                 DevmodeMessage::Ack => {
                                     let block_id = BlockId::from(message.content);
                                     info!(
-                                        "Received ack message from {:?}: {:?}",
-                                        &sender_id, block_id
+                                        "Received ack message from {}: {}",
+                                        to_hex(&sender_id),
+                                        to_hex(&block_id)
                                     );
                                 }
                             }
