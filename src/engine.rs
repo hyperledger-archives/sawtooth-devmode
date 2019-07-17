@@ -15,6 +15,7 @@
  * ------------------------------------------------------------------------------
  */
 
+use std::fmt::{self, Write};
 use std::str::FromStr;
 use std::sync::mpsc::{Receiver, RecvTimeoutError};
 use std::thread::sleep;
@@ -242,7 +243,7 @@ impl Engine for DevmodeEngine {
                             break;
                         }
                         Update::BlockNew(block) => {
-                            info!("Checking consensus data: {:?}", block);
+                            info!("Checking consensus data: {}", DisplayBlock(&block));
 
                             if &block.previous_id == &NULL_BLOCK_IDENTIFIER {
                                 warn!("Received genesis block; ignoring");
@@ -250,10 +251,10 @@ impl Engine for DevmodeEngine {
                             }
 
                             if check_consensus(&block) {
-                                info!("Passed consensus check: {:?}", block);
+                                info!("Passed consensus check: {}", DisplayBlock(&block));
                                 service.check_block(block.block_id);
                             } else {
-                                info!("Failed consensus check: {:?}", block);
+                                info!("Failed consensus check: {}", DisplayBlock(&block));
                                 service.fail_block(block.block_id);
                             }
                         }
@@ -266,8 +267,9 @@ impl Engine for DevmodeEngine {
                             chain_head = service.get_chain_head();
 
                             info!(
-                                "Choosing between chain heads -- current: {:?} -- new: {:?}",
-                                chain_head, block
+                                "Choosing between chain heads -- current: {} -- new: {}",
+                                DisplayBlock(&chain_head),
+                                DisplayBlock(&block)
                             );
 
                             // Advance the chain if possible.
@@ -275,7 +277,7 @@ impl Engine for DevmodeEngine {
                                 || (block.block_num == chain_head.block_num
                                     && block.block_id > chain_head.block_id)
                             {
-                                info!("Committing {:?}", block);
+                                info!("Committing {}", DisplayBlock(&block));
                                 service.commit_block(block_id);
                             } else if block.block_num < chain_head.block_num {
                                 let mut chain_block = chain_head;
@@ -286,14 +288,14 @@ impl Engine for DevmodeEngine {
                                     }
                                 }
                                 if block.block_id > chain_block.block_id {
-                                    info!("Switching to new fork {:?}", block);
+                                    info!("Switching to new fork {}", DisplayBlock(&block));
                                     service.commit_block(block_id);
                                 } else {
-                                    info!("Ignoring fork {:?}", block);
+                                    info!("Ignoring fork {}", DisplayBlock(&block));
                                     service.ignore_block(block_id);
                                 }
                             } else {
-                                info!("Ignoring {:?}", block);
+                                info!("Ignoring {}", DisplayBlock(&block));
                                 service.ignore_block(block_id);
                             }
                         }
@@ -379,6 +381,26 @@ impl Engine for DevmodeEngine {
     fn name(&self) -> String {
         "Devmode".into()
     }
+}
+
+struct DisplayBlock<'b>(&'b Block);
+
+impl<'b> fmt::Display for DisplayBlock<'b> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.write_str("Block(")?;
+        f.write_str(&self.0.block_num.to_string())?;
+        write!(f, ", id: {}", to_hex(&self.0.block_id))?;
+        write!(f, ", prev: {})", to_hex(&self.0.previous_id))
+    }
+}
+
+fn to_hex(bytes: &[u8]) -> String {
+    let mut buf = String::new();
+    for b in bytes {
+        write!(&mut buf, "{:0x}", b).expect("Unable to write to string");
+    }
+
+    buf
 }
 
 fn check_consensus(block: &Block) -> bool {
