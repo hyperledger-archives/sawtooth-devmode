@@ -36,12 +36,12 @@ struct LogGuard {
 }
 
 pub struct DevmodeService {
-    service: Box<Service>,
+    service: Box<dyn Service>,
     log_guard: LogGuard,
 }
 
 impl DevmodeService {
-    pub fn new(service: Box<Service>) -> Self {
+    pub fn new(service: Box<dyn Service>) -> Self {
         DevmodeService {
             service,
             log_guard: LogGuard::default(),
@@ -55,6 +55,7 @@ impl DevmodeService {
             .expect("Failed to get chain head")
     }
 
+    #[allow(clippy::ptr_arg)]
     fn get_block(&mut self, block_id: &BlockId) -> Block {
         debug!("Getting block {}", to_hex(&block_id));
         self.service
@@ -141,7 +142,7 @@ impl DevmodeService {
     fn broadcast_published_block(&mut self, block_id: BlockId) {
         debug!("Broadcasting published block: {}", to_hex(&block_id));
         self.service
-            .broadcast("published", Vec::from(block_id))
+            .broadcast("published", block_id)
             .expect("Failed to broadcast published block");
     }
 
@@ -149,13 +150,14 @@ impl DevmodeService {
         let block = block.clone();
 
         self.service
-            .send_to(&block.signer_id, "received", Vec::from(block.block_id))
+            .send_to(&block.signer_id, "received", block.block_id)
             .expect("Failed to send block received");
     }
 
+    #[allow(clippy::ptr_arg)]
     fn send_block_ack(&mut self, sender_id: &PeerId, block_id: BlockId) {
         self.service
-            .send_to(&sender_id, "ack", Vec::from(block_id))
+            .send_to(&sender_id, "ack", block_id)
             .expect("Failed to send block ack");
     }
 
@@ -212,10 +214,11 @@ impl DevmodeEngine {
 }
 
 impl Engine for DevmodeEngine {
+    #[allow(clippy::cognitive_complexity)]
     fn start(
         &mut self,
         updates: Receiver<Update>,
-        service: Box<Service>,
+        service: Box<dyn Service>,
         startup_state: StartupState,
     ) -> Result<(), Error> {
         let mut service = DevmodeService::new(service);
@@ -245,7 +248,7 @@ impl Engine for DevmodeEngine {
                         Update::BlockNew(block) => {
                             info!("Checking consensus data: {}", DisplayBlock(&block));
 
-                            if &block.previous_id == &NULL_BLOCK_IDENTIFIER {
+                            if block.previous_id == NULL_BLOCK_IDENTIFIER {
                                 warn!("Received genesis block; ignoring");
                                 continue;
                             }
@@ -322,30 +325,27 @@ impl Engine for DevmodeEngine {
                                 .unwrap()
                             {
                                 DevmodeMessage::Published => {
-                                    let block_id = BlockId::from(message.content);
                                     info!(
                                         "Received block published message from {}: {}",
                                         to_hex(&sender_id),
-                                        to_hex(&block_id)
+                                        to_hex(&message.content)
                                     );
                                 }
 
                                 DevmodeMessage::Received => {
-                                    let block_id = BlockId::from(message.content);
                                     info!(
                                         "Received block received message from {}: {}",
                                         to_hex(&sender_id),
-                                        to_hex(&block_id)
+                                        to_hex(&message.content)
                                     );
-                                    service.send_block_ack(&sender_id, block_id);
+                                    service.send_block_ack(&sender_id, message.content);
                                 }
 
                                 DevmodeMessage::Ack => {
-                                    let block_id = BlockId::from(message.content);
                                     info!(
                                         "Received ack message from {}: {}",
                                         to_hex(&sender_id),
-                                        to_hex(&block_id)
+                                        to_hex(&message.content)
                                     );
                                 }
                             }
