@@ -384,6 +384,10 @@ impl Engine for DevmodeEngine {
     fn name(&self) -> String {
         "Devmode".into()
     }
+
+    fn additional_protocols(&self) -> Vec<(String, String)> {
+        vec![]
+    }
 }
 
 struct DisplayBlock<'b>(&'b Block);
