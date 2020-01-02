@@ -22,4 +22,5 @@ then
     $bin $*
 else
     echo "Please build devmode-rust first with 'build_all' or 'build_rust'"
+    exit 1
 fi
