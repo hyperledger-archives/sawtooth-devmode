@@ -125,7 +125,7 @@ services:
       - validator
     command: |
       bash -c "
-        cargo build --release
+        cargo build --release && \
         devmode-engine-rust -v --connect tcp://validator:5050
       "
     stop_signal: SIGKILL
