@@ -84,8 +84,10 @@ impl DevmodeService {
             summary = self.service.summarize_block();
         }
         self.log_guard.not_ready_to_summarize = false;
+        let summary = summary.expect("Failed to summarize block");
+        debug!("Block has been summarized successfully");
 
-        let consensus: Vec<u8> = create_consensus(&summary.expect("Failed to summarize block"));
+        let consensus: Vec<u8> = create_consensus(&summary);
         let mut block_id = self.service.finalize_block(consensus.clone());
         while let Err(Error::BlockNotReady) = block_id {
             if !self.log_guard.not_ready_to_finalize {
@@ -96,8 +98,13 @@ impl DevmodeService {
             block_id = self.service.finalize_block(consensus.clone());
         }
         self.log_guard.not_ready_to_finalize = false;
+        let block_id = block_id.expect("Failed to finalize block");
+        debug!(
+            "Block has been finalized successfully: {}",
+            to_hex(&block_id)
+        );
 
-        block_id.expect("Failed to finalize block")
+        block_id
     }
 
     fn check_block(&mut self, block_id: BlockId) {
