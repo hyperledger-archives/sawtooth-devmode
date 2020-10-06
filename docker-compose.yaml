@@ -16,41 +16,6 @@ version: '3.6'
 
 services:
 
-  settings-tp:
-    image: hyperledger/sawtooth-settings-tp:nightly
-    container_name: sawtooth-settings-tp
-    depends_on:
-      - validator
-    command: |
-      bash -c "
-        settings-tp -vv -C tcp://validator:4004
-      "
-    stop_signal: SIGKILL
-
-  intkey-tp-python:
-    image: hyperledger/sawtooth-intkey-tp-python:nightly
-    container_name: intkey-tp-python
-    depends_on:
-      - validator
-    command: |
-      bash -c "
-        intkey-tp-python -vv -C tcp://validator:4004
-      "
-    stop_signal: SIGKILL
-
-
-  xo-tp-python:
-    image: hyperledger/sawtooth-xo-tp-python:nightly
-    container_name: xo-tp-python
-    depends_on:
-      - validator
-    command: |
-      bash -c "
-        xo-tp-python -vv -C tcp://validator:4004
-      "
-    stop_signal: SIGKILL
-
-
   client:
     image: hyperledger/sawtooth-shell:nightly
     container_name: sawtooth-shell
