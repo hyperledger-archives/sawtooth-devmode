@@ -128,7 +128,7 @@ services:
     stop_signal: SIGKILL
 
   validator-0:
-    image: hyperledger/sawtooth-validator:nightly
+    image: hyperledger/sawtooth-validator:droptarget-nightly
     expose:
       - 4004
       - 8800
@@ -162,7 +162,7 @@ services:
     stop_signal: SIGKILL
 
   validator-1:
-    image: hyperledger/sawtooth-validator:nightly
+    image: hyperledger/sawtooth-validator:droptarget-nightly
     expose:
       - 4004
       - 8800
@@ -184,7 +184,7 @@ services:
     stop_signal: SIGKILL
 
   validator-2:
-    image: hyperledger/sawtooth-validator:nightly
+    image: hyperledger/sawtooth-validator:droptarget-nightly
     expose:
       - 4004
       - 8800
@@ -206,7 +206,7 @@ services:
     stop_signal: SIGKILL
 
   validator-3:
-    image: hyperledger/sawtooth-validator:nightly
+    image: hyperledger/sawtooth-validator:droptarget-nightly
     expose:
       - 4004
       - 8800
@@ -228,7 +228,7 @@ services:
     stop_signal: SIGKILL
 
   validator-4:
-    image: hyperledger/sawtooth-validator:nightly
+    image: hyperledger/sawtooth-validator:droptarget-nightly
     expose:
       - 4004
       - 8800
