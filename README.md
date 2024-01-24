@@ -1,39 +1,18 @@
-![Hyperledger Sawtooth](https://raw.githubusercontent.com/hyperledger/sawtooth-core/master/images/sawtooth_logo_light_blue-small.png)
+# Hyperledger Sawtooth
 
-Sawtooth Devmode
--------------
+This project has moved (see below).
 
-Sawtooth dev mode is a consensus engine for Hyperledger Sawtooth that offers a
-simplified random-leader algorithm. This method is intended for testing
-applications built on top of the Hyperledger Sawtooth platform. It is useful
-when developing transaction processors, smart contracts, or other components
-because of its high commit rate. Dev mode commits batches as fast as possible,
-in order to provide quick feedback to the developer.
+Hyperledger Sawtooth was a project to provide an enterprise solution for
+building, deploying, and running distributed ledgers (also called blockchains).
 
-Dev mode also demonstrates how to use the Sawtooth consensus engine API for a
-lottery-style consensus implementation. Developers interested in implementing
-a consensus engine can use the dev mode source code as an example.
+# Project Status
 
-Although the dev mode consensus engine can be used in a Sawtooth network, it
-has a very inefficient fork-resolution algorithm and makes no guarantees about
-crash fault tolerance. It should not be used in a production environment.
+This Hyperledger project, Hyperledger Sawtooth, has been archived and is no
+longer active within Hyperledger.
 
-Documentation
--------------
+Sawtooth is now maintained by the Splinter community. For more information,
+visit: https://github.com/splintercommunity/sawtooth-core/
 
-Documentation for how to run and extend Sawtooth is available here:
-https://sawtooth.hyperledger.org/docs/
-
-
-Project Status
------------------
-
-This project is an _active_ Hyperledger project. It was proposed to the
-community and documented [here](https://docs.google.com/document/d/1j7YcGLJH6LkzvWdOYFIt2kpkVlLEmILErXL6t-Ky2zU/edit).
-Information on what _Active_ entails can be found in the
-[Hyperledger Project Lifecycle document](https://wiki.hyperledger.org/community/project-lifecycle).
-
-License
--------
+# License
 
 Hyperledger Sawtooth software is licensed under the [Apache License Version 2.0](LICENSE) software license.
